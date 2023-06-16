@@ -646,8 +646,7 @@
 (defn palabra-reservada? [x]
   (let  [a (hash-set 'ENV 'LOAD 'SAVE 'RUN 'EXIT 'INPUT 'PRINT '? 'DATA 'READ 'REM 'RESTORE 'CLEAR 'LET 'LIST 'NEW 'END 'FOR 'TO 'NEXT 'STEP 'GOSUB
                      'RETURN 'GOTO 'IF 'THEN 'ON 'ATN 'INT 'SIN 'EXP 'LOG 'LEN 'MID$ 'ASC 'CHR$ 'STR$ '+ '- '* '/ '= '<> '< '<= '> '>= 'AND 'OR)]
-    (contains? a x)
-    ))
+    (contains? a x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; operador?: predicado para determinar si un identificador es un
@@ -659,7 +658,9 @@
 ; user=> (operador? (symbol "%"))
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn operador? [x])
+(defn operador? [x]
+  (let  [a (hash-set '+ '- '* '/ '= '<> '< '<= '> '>=)]
+    (contains? a x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; anular-invalidos: recibe una lista de simbolos y la retorna con
@@ -667,7 +668,21 @@
 ; user=> (anular-invalidos '(IF X & * Y < 12 THEN LET ! X = 0))
 ; (IF X nil * Y < 12 THEN LET nil X = 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn anular-invalidos [sentencia])
+(defn letter? [c]
+  (let [chars (map char (concat (range 65 91) (range 97 123)))]
+    (reduce #(or %1 %2) (map (partial = (first (str c))) chars))))
+
+
+(defn simbolo-valido [simb]
+  (cond
+    (palabra-reservada? simb) simb
+    (operador? simb) simb
+    (number? simb) simb
+    (letter? simb) simb
+    :else nil))
+
+(defn anular-invalidos [sentencia]
+  (map simbolo-valido sentencia))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; cargar-linea: recibe una linea de codigo y un ambiente y retorna
@@ -935,4 +950,3 @@
 (defn eliminar-cero-entero [n])
 
 true
-

@@ -57,3 +57,22 @@
     (is (true? (palabra-reservada? 'OR)))
     )
 )
+
+(deftest operador?-test
+  (testing "operador?"
+    (is (true? (operador? '+)))
+    (is (true? (operador? (symbol "+"))))
+    (is (true? (operador? '-)))
+    (is (true? (operador? '* ) ))
+    (is (true? (operador? '/)))
+    (is (true? (operador? '=)))
+    (is (true? (operador? '<>)))
+    (is (true? (operador? '<)))
+    (is (true? (operador? '<=)))
+    (is (true? (operador? '>)))
+    (is (true? (operador? '>=)))
+    (is (false? (operador? '%)))))
+
+(deftest anular-invalidos-test
+      (testing "anular-invalidos"
+        (is (= (anular-invalidos '(IF X & * Y < 12 THEN LET ! X = 0)) '(IF X nil * Y < 12 THEN LET nil X = 0)))))
