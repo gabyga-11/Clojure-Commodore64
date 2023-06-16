@@ -76,3 +76,13 @@
 (deftest anular-invalidos-test
       (testing "anular-invalidos"
         (is (= (anular-invalidos '(IF X & * Y < 12 THEN LET ! X = 0)) '(IF X nil * Y < 12 THEN LET nil X = 0)))))
+
+((deftest expandir-nexts-test
+      (testing "expandir-nexts"
+        (def n (list '(PRINT 1) (list 'NEXT 'A (symbol ",") 'B)))
+        (def result (list '(PRINT 1) (list 'NEXT 'A) (list 'NEXT 'B)))
+        (is (= (expandir-nexts n) result ))
+      )
+   ) 
+
+ )

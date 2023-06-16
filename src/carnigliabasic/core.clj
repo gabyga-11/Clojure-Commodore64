@@ -54,6 +54,18 @@
 ;; >start en el buscador para correr calva
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; FUNCIONES AUXILIARES PROPIAS Y DE USO GENERAL
+; ev: elimina nils
+(defn ev [l]
+  (remove nil? l))
+
+; flatter-secuencia: transforma una lista de secuencias para que este toda al mismo nivel
+; Ejemplo: flatten-secuencia '((PRINT 1) ((NEXT A) (NEXT B)) (PRINT 10))
+; da como resultado '((PRINT 1) (NEXT A) (NEXT B) (PRINT 10))
+(defn flatten-secuencia [sec]
+  (doall (apply concat (map #(if (list? (first %)) % (cons % '()))
+                     sec))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -709,7 +721,18 @@
 ; user=> (expandir-nexts n)
 ; ((PRINT 1) (NEXT A) (NEXT B))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn expandir-nexts [n])
+
+(defn obtener-next-sentencia [n]
+  (if (= 'NEXT (first n) ) 
+      (let [vars (map #(list %) (ev (rest (anular-invalidos n))))] ;'((A) (B))
+        (map (partial cons 'NEXT) vars)) ;((NEXT A) (NEXT B))
+
+      n)
+  )
+
+(defn expandir-nexts [n]
+   (flatten-secuencia (map obtener-next-sentencia n))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; dar-error: recibe un error (codigo o mensaje) y el puntero de 
